@@ -18,6 +18,8 @@
 
 #if __riscv_xlen == (__SIZEOF_POINTER__ * 8)
 # define __WORDSIZE __riscv_xlen
+#elif __CHERI_PURE_CAPABILITY__
+#define __WORDSIZE __riscv_xlen
 #else
 # error unsupported ABI
 #endif

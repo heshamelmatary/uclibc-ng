@@ -1,4 +1,5 @@
 /* setjmp for RISC-V.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 1996-2018 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,20 +28,20 @@ ENTRY (setjmp)
   /* Fallthrough */
 END (setjmp)
 ENTRY (__sigsetjmp)
-	REG_S ra,  0*SZREG(a0)
-	REG_S s0,  1*SZREG(a0)
-	REG_S s1,  2*SZREG(a0)
-	REG_S s2,  3*SZREG(a0)
-	REG_S s3,  4*SZREG(a0)
-	REG_S s4,  5*SZREG(a0)
-	REG_S s5,  6*SZREG(a0)
-	REG_S s6,  7*SZREG(a0)
-	REG_S s7,  8*SZREG(a0)
-	REG_S s8,  9*SZREG(a0)
-	REG_S s9, 10*SZREG(a0)
-	REG_S s10,11*SZREG(a0)
-	REG_S s11,12*SZREG(a0)
-	REG_S sp, 13*SZREG(a0)
+	REG_S cra,  0*SZREG(ca0)
+	REG_S cs0,  1*SZREG(ca0)
+	REG_S cs1,  2*SZREG(ca0)
+	REG_S cs2,  3*SZREG(ca0)
+	REG_S cs3,  4*SZREG(ca0)
+	REG_S cs4,  5*SZREG(ca0)
+	REG_S cs5,  6*SZREG(ca0)
+	REG_S cs6,  7*SZREG(ca0)
+	REG_S cs7,  8*SZREG(ca0)
+	REG_S cs8,  9*SZREG(ca0)
+	REG_S cs9, 10*SZREG(ca0)
+	REG_S cs10,11*SZREG(ca0)
+	REG_S cs11,12*SZREG(ca0)
+	REG_S csp, 13*SZREG(ca0)
 
 #ifndef __riscv_float_abi_soft
 	FREG_S fs0, 14*SZREG+ 0*SZFREG(a0)
@@ -60,7 +61,7 @@ ENTRY (__sigsetjmp)
 #if !IS_IN_libc && IS_IN_rtld
   /* In ld.so we never save the signal mask.  */
   li a0, 0
-  ret
+  cret
 #else
   /* Make a tail call to __sigjmp_save; it takes the same args.  */
   j __sigjmp_save

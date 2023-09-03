@@ -1,4 +1,5 @@
 /* Miscellaneous macros.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 2000-2018 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -20,6 +21,23 @@
 #define _SYS_ASM_H
 
 /* Macros to handle different pointer/register sizes for 32/64-bit code.  */
+#if __CHERI_PURE_CAPABILITY__
+#if __riscv_xlen == 64
+# define PTRLOG 4
+# define SZREG	16
+# define REG_S csc
+# define REG_L clc
+#elif __riscv_xlen == 32
+# define PTRLOG 3
+# define SZREG    8
+# define REG_S csc
+# define REG_L clc
+// # warning "rv32i-based targets are experimental"
+#else
+# error __riscv_xlen must equal 32 or 64
+#endif
+
+#else
 #if __riscv_xlen == 64
 # define PTRLOG 3
 # define SZREG	8
@@ -33,6 +51,7 @@
 // # warning "rv32i-based targets are experimental"
 #else
 # error __riscv_xlen must equal 32 or 64
+#endif
 #endif
 
 #if !defined __riscv_float_abi_soft

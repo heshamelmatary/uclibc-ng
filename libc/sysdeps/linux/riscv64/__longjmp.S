@@ -1,4 +1,5 @@
 /* longjmp, RISC-V version.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 1996-2018 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -19,20 +20,20 @@
 #include <sys/asm.h>
 
 ENTRY (__longjmp)
-	REG_L ra,  0*SZREG(a0)
-	REG_L s0,  1*SZREG(a0)
-	REG_L s1,  2*SZREG(a0)
-	REG_L s2,  3*SZREG(a0)
-	REG_L s3,  4*SZREG(a0)
-	REG_L s4,  5*SZREG(a0)
-	REG_L s5,  6*SZREG(a0)
-	REG_L s6,  7*SZREG(a0)
-	REG_L s7,  8*SZREG(a0)
-	REG_L s8,  9*SZREG(a0)
-	REG_L s9, 10*SZREG(a0)
-	REG_L s10,11*SZREG(a0)
-	REG_L s11,12*SZREG(a0)
-	REG_L sp, 13*SZREG(a0)
+	REG_L cra,  0*SZREG(ca0)
+	REG_L cs0,  1*SZREG(ca0)
+	REG_L cs1,  2*SZREG(ca0)
+	REG_L cs2,  3*SZREG(ca0)
+	REG_L cs3,  4*SZREG(ca0)
+	REG_L cs4,  5*SZREG(ca0)
+	REG_L cs5,  6*SZREG(ca0)
+	REG_L cs6,  7*SZREG(ca0)
+	REG_L cs7,  8*SZREG(ca0)
+	REG_L cs8,  9*SZREG(ca0)
+	REG_L cs9, 10*SZREG(ca0)
+	REG_L cs10,11*SZREG(ca0)
+	REG_L cs11,12*SZREG(ca0)
+	REG_L csp, 13*SZREG(ca0)
 
 #ifndef __riscv_float_abi_soft
 	FREG_L fs0, 14*SZREG+ 0*SZFREG(a0)
@@ -50,8 +51,8 @@ ENTRY (__longjmp)
 #endif
 
 	seqz a0, a1
-	add  a0, a0, a1   # a0 = (a1 == 0) ? 1 : a1
-	ret
+	cincoffset  ca0, ca0, a1   # a0 = (a1 == 0) ? 1 : a1
+	cret
 
 END (__longjmp)
 libc_hidden_def(__longjmp)

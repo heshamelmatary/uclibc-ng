@@ -649,7 +649,7 @@ void __atomic_link_error (void);
 # ifndef atomic_load_relaxed
 #  define atomic_load_relaxed(mem) \
    ({ __typeof (*(mem)) __atg100_val;					      \
-   __asm__ ("" : "=r" (__atg100_val) : "0" (*(mem)));			      \
+   __asm__ ("" : "=C" (__atg100_val) : "0" (*(mem)));			      \
    __atg100_val; })
 # endif
 # ifndef atomic_load_acquire

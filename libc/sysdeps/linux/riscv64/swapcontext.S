@@ -1,4 +1,5 @@
 /* Save and set current context.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 2009-2018 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -20,7 +21,7 @@
 /* int swapcontext (ucontext_t *oucp, const ucontext_t *ucp) */
 
 LEAF (swapcontext)
-	mv	t0, a1			/* Save ucp into t0.  */
+	cmove	ct0, ca1		/* Save ucp into t0.  */
 
 	SAVE_INT_REG (ra,   0, a0)
 	SAVE_INT_REG (ra,   1, a0)
@@ -60,8 +61,8 @@ LEAF (swapcontext)
 
 /* rt_sigprocmask (SIG_SETMASK, &ucp->uc_sigmask, &oucp->uc_sigmask, _NSIG8) */
 	li	a3, _NSIG8
-	add	a2, a0, UCONTEXT_SIGMASK
-	add     a1, t0, UCONTEXT_SIGMASK
+	cincoffset ca2, ca2, UCONTEXT_SIGMASK
+	cincoffset ca1, ct0, UCONTEXT_SIGMASK
 	li	a0, SIG_SETMASK
 
 	li	a7, SYS_ify (rt_sigprocmask)

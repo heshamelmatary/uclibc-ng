@@ -1,4 +1,5 @@
 /* vfork for Linux, RISC-V version.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 2005-2018 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,13 +28,13 @@
 LEAF (__vfork)
 
 	li	a0, (CLONE_VFORK | CLONE_VM | SIGCHLD)
-	mv	a1, sp
+	cmove	ca1, csp
 
 	li	a7, __NR_clone
 	scall
 
 	bltz	a0, 1f
-	ret
+	cret
 
 1:	j		__syscall_error
 END (__vfork)

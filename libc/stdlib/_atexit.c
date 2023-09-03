@@ -278,10 +278,10 @@ static __always_inline int not_null_ptr(const void *p)
 {
 	const void *q;
 	__asm__ (""
-		: "=r" (q) /* output */
+		: "=C" (q) /* output */
 		: "0" (p) /* input */
 	);
-	return q != 0;
+	return q != NULL;
 }
 
 extern void weak_function _stdio_term(void) attribute_hidden;

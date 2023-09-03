@@ -1,4 +1,5 @@
 /* Startup code compliant to the ELF RISC-V ABI.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 1995-2018 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -49,19 +50,25 @@
 	.weak _fini
 
 _start:
-	call  .Lload_gp
-	mv    a5, a0  /* rtld_fini.  */
+	cllc cra, .Lload_gp
+	cjalr cra
+
+	cllc cra, __start_purecap
+	cjalr cra
+
+	cmove    ca5, cnull  /* rtld_fini.  */
 	/* main may be in a shared library.  */
-	la   a0, main
-	REG_L a1, 0(sp)      /* argc.  */
-	addi  a2, sp, SZREG  /* argv.  */
-	andi  sp, sp, ALMASK /* Align stack. */
-	lla   a3, _init
-	lla   a4, _fini
-	mv    a6, sp  /* stack_end.  */
+	clgc ca0, main
+	REG_L ca1, 0(csp)      /* argc.  */
+	cincoffset  ca2, csp, SZREG  /* argv.  */
+	#andi  sp, sp, ALMASK /* Align stack. */
+	clgc  ca3, _init
+	clgc  ca4, _fini
+	cmove    ca6, csp  /* stack_end.  */
 
-	tail  __uClibc_main@plt
-
+	#tail  __uClibc_main@plt
+	clgc cra, __uClibc_main
+	cjr cra
 	.size	_start,.-_start
 
 /* Dynamic links need the global pointer to be initialized prior to calling
@@ -73,12 +80,19 @@ _start:
 .Lload_gp:
 .option push
 .option norelax
-	lla   gp, __global_pointer$
+	clgc cgp, __global_pointer$
 .option pop
-	ret
+	cret
 
 	.section .preinit_array,"aw"
 	.dc.a .Lload_gp
+
+	.globl fcntl64
+	.type	fcntl64,%function
+
+fcntl64:
+	cret
+	.size	fcntl64,.-fcntl64
 
 /* Define a symbol for the first piece of initialized data.  */
 	.data
@@ -86,3 +100,7 @@ _start:
 __data_start:
 	.weak data_start
 	data_start = __data_start
+	.global __offset
+__offset:
+	.zero 8
+

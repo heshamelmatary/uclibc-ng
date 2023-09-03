@@ -1,4 +1,5 @@
 /* Wrapper around clone system call.  RISC-V version.
+   Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
    Copyright (C) 1996-2018 Free Software Foundation, Inc.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -33,15 +34,15 @@ LEAF (clone)
 	beqz		a0,L (invalid)	/* No NULL function pointers.  */
 	beqz		a1,L (invalid)	/* No NULL stack pointers.  */
 
-	addi		a1,a1,-16	/* Reserve argument save space.  */
-	REG_S		a0,0(a1)	/* Save function pointer.  */
-	REG_S		a3,SZREG(a1)	/* Save argument pointer.  */
+	cincoffset		ca1,ca1,-16	/* Reserve argument save space.  */
+	REG_S		ca0,0(ca1)	/* Save function pointer.  */
+	REG_S		ca3,SZREG(ca1)	/* Save argument pointer.  */
 
 	/* The syscall expects the args to be in different slots.  */
-	mv		a0,a2
-	mv		a2,a4
-	mv		a3,a5
-	mv		a4,a6
+	cmove		ca0,ca2
+	cmove		ca2,ca4
+	cmove		ca3,ca5
+	cmove		ca4,ca6
 
 	/* Do the system call.  */
 	li		a7,__NR_clone
@@ -51,7 +52,7 @@ LEAF (clone)
 	beqz		a0,L (thread_start)
 
 	/* Successful return from the parent.  */
-	ret
+	cret
 
 L (invalid):
 	li		a0, -EINVAL
@@ -67,11 +68,11 @@ L (error):
 ENTRY (__thread_start)
 L (thread_start):
 	/* Restore the arg for user's function.  */
-	REG_L		a1,0(sp)	/* Function pointer.  */
-	REG_L		a0,SZREG(sp)	/* Argument pointer.  */
+	REG_L		ca1,0(csp)	/* Function pointer.  */
+	REG_L		ca0,SZREG(csp)	/* Argument pointer.  */
 
 	/* Call the user's function.  */
-	jalr		a1
+	cjalr		ca1
 
 	/* Call exit with the function's return value.  */
 	li		a7, __NR_exit
