@@ -1,6 +1,7 @@
 /*
  * mmap() for uClibc
  *
+ * Copyright (C) 2022-2023 Hesham Almatary <hesham.almatary@cl.cam.ac.uk>
  * Copyright (C) 2000-2006 Erik Andersen <andersen@uclibc.org>
  *
  * Licensed under the LGPL v2.1, see the file COPYING.LIB in this tarball.
@@ -44,10 +45,10 @@ static void *_mmap(void *addr, size_t len, int prot, int flags,
 	}
 # ifdef __USE_FILE_OFFSET64
 	return __syscall_mmap2(addr, len, prot, flags, fd,
-				((__u_quad_t) offset >> mmap2_shift));
+				((uintptr_t) offset >> mmap2_shift));
 # else
 	return __syscall_mmap2(addr, len, prot, flags, fd,
-				((__u_long) offset >> mmap2_shift));
+				((uintptr_t) offset >> mmap2_shift));
 # endif
 }
 

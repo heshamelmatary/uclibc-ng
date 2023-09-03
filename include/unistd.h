@@ -1142,7 +1142,7 @@ libc_hidden_proto(sbrk)
 
    In Mach, all system calls take normal arguments and always return an
    error code (zero for success).  */
-extern long int syscall (long int __sysno, ...) __THROW;
+extern __uintcap_t syscall (__uintcap_t __sysno, ...) __THROW;
 
 #endif	/* Use misc.  */
 

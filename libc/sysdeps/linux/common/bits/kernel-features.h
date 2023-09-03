@@ -196,7 +196,7 @@
    don't know when it got introduced).  But PowerPC64 does not support
    separate FCNTL64 call, FCNTL is already 64-bit */
 #if __LINUX_KERNEL_VERSION >= 132100 \
-    && (defined __arm__ || defined __powerpc__ || defined __sh__) \
+    && (defined __arm__ || defined __powerpc__ || defined __sh__ || defined __riscv__) \
     && !defined __powerpc64__
 # define __ASSUME_FCNTL64		1
 #endif

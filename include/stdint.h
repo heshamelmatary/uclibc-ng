@@ -118,16 +118,16 @@ typedef unsigned long long int	uint_fast64_t;
 /* Types for `void *' pointers.  */
 #if __WORDSIZE == 64
 # ifndef __intptr_t_defined
-typedef long int		intptr_t;
+typedef __intcap_t intptr_t;
 #  define __intptr_t_defined
 # endif
-typedef unsigned long int	uintptr_t;
+typedef __uintcap_t uintptr_t;
 #else
 # ifndef __intptr_t_defined
-typedef int			intptr_t;
+typedef __intcap_t intptr_t;
 #  define __intptr_t_defined
 # endif
-typedef unsigned int		uintptr_t;
+typedef __uintcap_t uintptr_t;
 #endif
 
 

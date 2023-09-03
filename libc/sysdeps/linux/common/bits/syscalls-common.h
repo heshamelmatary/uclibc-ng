@@ -42,7 +42,7 @@
 # define INLINE_SYSCALL_NCS(num, nr, args...)				\
 (__extension__								\
  ({									\
-	long __res;							\
+	__uintcap_t __res;							\
 	INTERNAL_SYSCALL_DECL(__err);					\
 	(__extension__							\
 	 ({								\
@@ -60,7 +60,7 @@
 #ifndef INLINE_SYSCALL_NOERR_NCS
 # define INLINE_SYSCALL_NOERR_NCS(num, nr, args...)			\
 ({									\
-	long __res;							\
+	__uintcap_t __res;							\
 	INTERNAL_SYSCALL_DECL(__err);					\
 	__res = INTERNAL_SYSCALL_NCS(num, __err, nr, args);		\
 	__res;								\
