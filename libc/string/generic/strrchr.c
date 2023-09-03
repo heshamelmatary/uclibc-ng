@@ -17,7 +17,17 @@
 
 #include <string.h>
 
-
+#if 0
+char *strrchr(const char *s, int c)
+{
+  const char *last = NULL;
+  do {
+    if (*s == (char)c)
+      last = s;
+  } while (*s++);
+  return (char *)last;
+}
+#else
 /* Find the last occurrence of C in S.  */
 char *strrchr (const char *s, int c)
 {
@@ -39,6 +49,7 @@ char *strrchr (const char *s, int c)
 
   return (char *) found;
 }
+#endif
 libc_hidden_weak(strrchr)
 #ifdef __UCLIBC_SUSV3_LEGACY__
 weak_alias(strrchr,rindex)

@@ -26,6 +26,15 @@
 
 #include "memcopy.h"
 
+#if 1
+char *strchr(const char *s, int c)
+{
+  for (; *s != (char)c; ++s)
+    if (*s == '\0')
+      return NULL;
+  return (char *)s;
+}
+#else
 /* Find the first occurrence of C in S.  */
 char *strchr (const char *s, int c_in)
 {
@@ -175,6 +184,7 @@ char *strchr (const char *s, int c_in)
 
   return NULL;
 }
+#endif
 libc_hidden_weak(strchr)
 #ifdef __UCLIBC_SUSV3_LEGACY__
 weak_alias(strchr,index)

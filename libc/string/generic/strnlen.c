@@ -25,6 +25,7 @@
 
 #ifdef __USE_GNU
 
+#if 0
 /* Find the length of S, but scan at most MAXLEN characters.  If no
    '\0' terminator is found in that many characters, return MAXLEN.  */
 size_t strnlen (const char *str, size_t maxlen)
@@ -155,5 +156,16 @@ size_t strnlen (const char *str, size_t maxlen)
     char_ptr = end_ptr;
   return char_ptr - str;
 }
+#endif
+
+size_t strnlen(const char *s, size_t count)
+{
+  const char *sc;
+
+  for (sc = s; count-- && *sc != '\0'; ++sc)
+    /* nothing */;
+  return sc - s;
+}
+
 libc_hidden_def(strnlen)
 #endif

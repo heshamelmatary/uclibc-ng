@@ -216,6 +216,89 @@ static void _wordcopy_bwd_dest_aligned (long int dstp, long int srcp, size_t len
   ((op_t *) dstp)[3] = MERGE (a0, sh_1, a1, sh_2);
 }
 
+#ifdef __CHERI_PURE_CAPABILITY__
+#ifdef __CHERI_PURE_CAPABILITY__
+typedef __intcap_t BLOCK_TYPE;
+#else
+typedef long BLOCK_TYPE;
+#endif
+
+/* Nonzero if either X or Y is not aligned on a "BLOCK_TYPE" boundary.  */
+#define UNALIGNED(X, Y) \
+  (((long)X & (sizeof (BLOCK_TYPE) - 1)) | ((long)Y & (sizeof (BLOCK_TYPE) - 1)))
+
+/* How many bytes are copied each iteration of the 4X unrolled loop.  */
+#define BIGBLOCKSIZE    (sizeof (BLOCK_TYPE) << 2)
+
+/* How many bytes are copied each iteration of the word copy loop.  */
+#define LITTLEBLOCKSIZE (sizeof (BLOCK_TYPE))
+
+/* Threshhold for punting to the byte copier.  */
+#if __CHERI_PURE_CAPABILITY__
+#define TOO_SMALL(LEN)  ((LEN) < LITTLEBLOCKSIZE)
+#else
+#define TOO_SMALL(LEN)  ((LEN) < BIGBLOCKSIZE)
+#endif
+void *memmove (void *dst_void,
+  const void *src_void,
+  size_t length)
+{
+  char *dst = dst_void;
+  const char *src = src_void;
+  BLOCK_TYPE *aligned_dst;
+  const BLOCK_TYPE *aligned_src;
+
+  if (src < dst && dst < src + length)
+    {
+      /* Destructive overlap...have to copy backwards */
+      src += length;
+      dst += length;
+      while (length--)
+  {
+    *--dst = *--src;
+  }
+    }
+  else
+    {
+      /* Use optimizing algorithm for a non-destructive copy to closely
+         match memcpy. If the size is small or either SRC or DST is unaligned,
+         then punt into the byte copy loop.  This should be rare.  */
+      if (!TOO_SMALL(length) && !UNALIGNED (src, dst))
+        {
+          aligned_dst = (BLOCK_TYPE*)dst;
+          aligned_src = (BLOCK_TYPE*)src;
+
+          /* Copy 4X BLOCK_TYPE words at a time if possible.  */
+          while (length >= BIGBLOCKSIZE)
+            {
+              *aligned_dst++ = *aligned_src++;
+              *aligned_dst++ = *aligned_src++;
+              *aligned_dst++ = *aligned_src++;
+              *aligned_dst++ = *aligned_src++;
+              length -= BIGBLOCKSIZE;
+            }
+
+          /* Copy one BLOCK_TYPE word at a time if possible.  */
+          while (length >= LITTLEBLOCKSIZE)
+            {
+              *aligned_dst++ = *aligned_src++;
+              length -= LITTLEBLOCKSIZE;
+            }
+
+          /* Pick up any residual with a byte copier.  */
+          dst = (char*)aligned_dst;
+          src = (char*)aligned_src;
+        }
+      while (length--)
+        {
+          *dst++ = *src++;
+        }
+    }
+
+  return dst_void;
+}
+
+#else
 void *memmove (void *dest, const void *src, size_t len)
 {
   unsigned long int dstp = (long int) dest;
@@ -289,4 +372,5 @@ void *memmove (void *dest, const void *src, size_t len)
 
   return (dest);
 }
+#endif
 libc_hidden_weak(memmove)

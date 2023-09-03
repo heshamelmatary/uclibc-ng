@@ -19,6 +19,7 @@
 
 #include "memcopy.h"
 
+#if 0
 /* Compare S1 and S2, returning less than, equal to or
    greater than zero if S1 is lexicographically less than,
    equal to or greater than S2.  */
@@ -39,6 +40,23 @@ int strcmp (const char *p1, const char *p2)
 
   return c1 - c2;
 }
+#endif
+
+int strcmp(const char *cs, const char *ct)
+{
+  unsigned char c1, c2;
+
+  while (1) {
+    c1 = *cs++;
+    c2 = *ct++;
+    if (c1 != c2)
+      return c1 < c2 ? -1 : 1;
+    if (!c1)
+      break;
+  }
+  return 0;
+}
+
 libc_hidden_weak(strcmp)
 
 #ifndef __UCLIBC_HAS_LOCALE__

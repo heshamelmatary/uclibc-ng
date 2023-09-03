@@ -27,6 +27,14 @@
 
 #include "memcopy.h"
 
+#if 1
+char *strchrnul(const char *s, int c)
+{
+  while (*s && *s != (char)c)
+    s++;
+  return (char *)s;
+}
+#else
 /* Find the first occurrence of C in S or the final NUL byte.  */
 char *strchrnul (const char *s, int c_in)
 {
@@ -159,5 +167,6 @@ char *strchrnul (const char *s, int c_in)
   /* This should never happen.  */
   return NULL;
 }
+#endif
 libc_hidden_def(strchrnul)
 #endif

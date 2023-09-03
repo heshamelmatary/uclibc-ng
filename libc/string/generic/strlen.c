@@ -22,6 +22,7 @@
 #include <stdlib.h>
 
 
+#if 0
 /* Return the length of the null-terminated string STR.  Scan for
    the null terminator quickly by testing four bytes at a time.  */
 size_t strlen (const char *str)
@@ -129,4 +130,15 @@ size_t strlen (const char *str)
 	}
     }
 }
+#endif
+
+size_t strlen(const char *s)
+{
+  const char *sc;
+
+  for (sc = s; *sc != '\0'; ++sc)
+    /* nothing */;
+  return sc - s;
+}
+
 libc_hidden_weak(strlen)

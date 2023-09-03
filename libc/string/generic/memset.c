@@ -18,6 +18,16 @@
 #include <string.h>
 #include "memcopy.h"
 
+#ifdef __CHERI_PURE_CAPABILITY__
+void *memset(void *s, int c, size_t count)
+{
+  char *xs = s;
+
+  while (count--)
+    *xs++ = c;
+  return s;
+}
+#else
 void *memset (void *dstpp, int c, size_t len)
 {
   long int dstp = (long int) dstpp;
@@ -81,4 +91,5 @@ void *memset (void *dstpp, int c, size_t len)
 
   return dstpp;
 }
+#endif
 libc_hidden_weak(memset)
