@@ -45,7 +45,7 @@ __UCLIBC_MUTEX_EXTERN(__malloc_lock)
   are optimized for the case of 8-byte alignment.
 */
 #ifndef MALLOC_ALIGNMENT
-#define MALLOC_ALIGNMENT       (2 * (sizeof(size_t)))
+#define MALLOC_ALIGNMENT       (2 * (sizeof(char *)))
 #endif
 
 /* The corresponding bit mask value */

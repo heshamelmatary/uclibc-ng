@@ -43,7 +43,7 @@ struct malloc_mmb *__malloc_mmapped_blocks = 0;
 /* A heap used for allocating malloc_mmb structures.  We could allocate
    them from the main heap, but that tends to cause heap fragmentation in
    annoying ways.  */
-HEAP_DECLARE_STATIC_FREE_AREA (initial_mmb_fa, 48); /* enough for 3 mmbs */
+HEAP_DECLARE_STATIC_FREE_AREA (initial_mmb_fa, 256); /* enough for 3 mmbs */
 struct heap_free_area *__malloc_mmb_heap = HEAP_INIT_WITH_FA (initial_mmb_fa);
 #ifdef HEAP_USE_LOCKING
 __UCLIBC_MUTEX_INIT(__malloc_mmb_heap_lock,PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP);
@@ -101,15 +101,15 @@ __malloc_from_heap (size_t size, struct heap_free_area **heap
 	{
 	  /* Because sbrk can return results of arbitrary
 	     alignment, align the result to a MALLOC_ALIGNMENT boundary.  */
-	  long aligned_block = MALLOC_ROUND_UP ((long)block, MALLOC_ALIGNMENT);
-	  if (block != (void *)aligned_block)
+	  intptr_t aligned_block = MALLOC_ROUND_UP ((intptr_t)block, MALLOC_ALIGNMENT);
+	  if (block != (intptr_t)aligned_block)
 	    /* Have to adjust.  We should only have to actually do this
 	       the first time (after which we will have aligned the brk
 	       correctly).  */
 	    {
 	      /* Move the brk to reflect the alignment; our next allocation
 		 should start on exactly the right alignment.  */
-	      sbrk (aligned_block - (long)block);
+	      sbrk (aligned_block - (intptr_t)block);
 	      block = (void *)aligned_block;
 	    }
 	}
